@@ -70,15 +70,22 @@ int process(int plr, int sense, char * l) {
   }
 }
 
+void printNum(int i) {
+  if (i) printf("\t %d", i);
+  else printf("\t .");
+}
+
 void printWorld(char * argv[]) {
-  printf("\n     \tWOOD\tBRICK\tSHEEP\tGRAIN\tORE  \t?????\n");
+  printf("\n     \tWOOD\tBRICK\tSHEEP\tGRAIN\tORE  \t?????\tTOTAL\n");
   for (int plr=0;plr<players;plr++) {
     printf("%d(%s) ", plr, argv[plr+1]);
+    int tot=0;
     for (int r=0;r<6;r++) {
       int i = world[plr][r];
-      if (i) printf("\t %d", i);
-      else printf("\t .");
+      tot += i;
+      printNum(i);
     }
+    printNum(tot);
     printf("\n");
   }
   printf("\n");
