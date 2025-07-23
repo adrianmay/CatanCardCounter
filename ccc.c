@@ -32,51 +32,50 @@ void nextPlayer() {
 }
 
 int resource(char r) {
-  char * p = strchr(resNames,r);
-  if (p) {
-    int i = p-resNames;
+  char * plr = strchr(resNames,r);
+  if (plr) {
+    int i = plr-resNames;
     return i; 
   }
   printf("WTF is %c?\n", r);
   return 5;
 }
 
-int process(int p, int sense, char * l) {
-  if (*l >= '0' && *l <= '4') 
+int process(int plr, int sense, char * l) {
+  if (*l >= '0' && *l <= '4') // Prefix a player number to apply the change to them
     return process(atoi(l), sense, l+1);
   switch (*l) {
-    case '\n': return 1;
-    case ',':
+    case '\n': return 1; // Blank entry goes to next player
+    case ',': //Back to previous player
       for (int a=0;a<players-1;a++) nextPlayer();
       return 0; 
-    case '<':
+    case '<': // Trade with other player
       l++;
       int other = atoi(l);
       l++;
-      process(p, 1, l);
+      process(plr, 1, l);
       process(other, -1, l);
       return 0;
-    case 'R': return process(p, 1, "-wb\n");
-    case 'S': return process(p, 1, "-wbsg\n");
-    case 'H': return process(p, 1, "-wbsg\n");
-    case 'C': return process(p, 1, "-ggooo\n");
-    case 'D': return process(p, 1, "-sgo\n");
+    case 'R': return process(plr, 1, "-wb\n");    // Road
+    case 'S': return process(plr, 1, "-wbsg\n");  // Settlement
+    case 'H': return process(plr, 1, "-wbsg\n");  // Ditto
+    case 'C': return process(plr, 1, "-ggooo\n"); // City
+    case 'D': return process(plr, 1, "-sgo\n");   // Dev card
     default:
-      int ret = 1;
       int inc=1;
-      if (*l=='-') {inc=-1; l++;}
+      if (*l=='-') {inc=-1; l++;} // Prepend minus to lose rather than receive all cards in the list
       for (;*l!='\n';l++) 
-        world[p][resource(*l)]+=inc*sense;
+        world[plr][resource(*l)]+=inc*sense;
       return 0;
   }
 }
 
 void printWorld(char * argv[]) {
   printf("\n     \tWOOD\tBRICK\tSHEEP\tGRAIN\tORE  \t?????\n");
-  for (int p=0;p<players;p++) {
-    printf("%d(%s) ", p, argv[p+1]);
+  for (int plr=0;plr<players;plr++) {
+    printf("%d(%s) ", plr, argv[plr+1]);
     for (int r=0;r<6;r++) {
-      int i = world[p][r];
+      int i = world[plr][r];
       if (i) printf("\t %d", i);
       else printf("\t .");
     }
