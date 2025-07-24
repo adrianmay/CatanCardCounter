@@ -62,10 +62,10 @@ int process(int plr, int sense, char * l) {
     case 'C': return process(plr, 1, "-ggooo\n"); // City
     case 'D': return process(plr, 1, "-sgo\n");   // Dev card
     default:
-      int inc=1;
-      if (*l=='-') {inc=-1; l++;} // Prepend minus to lose rather than receive all cards in the list
-      for (;*l!='\n';l++) 
-        world[plr][resource(*l)]+=inc*sense;
+      for (;*l!='\n';l++) {
+        if (*l=='-') sense = (-1)*sense;  // Prepend minus to lose rather than receive all cards in the list
+        else world[plr][resource(*l)] += sense;
+      }
       return 0;
   }
 }
